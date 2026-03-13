@@ -1,11 +1,11 @@
 const CACHE_NAME = 'solarlion-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/calculadora-ganancias.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/solarlionapps/',
+  '/solarlionapps/index.html',
+  '/solarlionapps/calculadora-ganancias.html',
+  '/solarlionapps/manifest.json',
+  '/solarlionapps/icon-192.png',
+  '/solarlionapps/icon-512.png'
 ];
 
 // Instalar: guarda archivos en caché
@@ -41,7 +41,7 @@ self.addEventListener('fetch', event => {
         const toCache = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, toCache));
         return response;
-      }).catch(() => caches.match('/index.html'));
+      }).catch(() => caches.match('/solarlionapps/index.html'));
     })
   );
 });

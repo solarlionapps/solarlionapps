@@ -676,7 +676,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/solarlionapps/sw.js')
           .then(() => console.log('SW registrado'))
           .catch(e => console.log('SW error:', e));
       });
