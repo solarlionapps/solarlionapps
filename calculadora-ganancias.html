@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F5A623" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SolarLion" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Calculadora de Ganancias — SolarLion Apps</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --brand:     #F5A623;
+      --brand-dk:  #C97D0A;
+      --brand-lt:  #FFF4E0;
+      --brand-mid: #FFD98A;
+      --red:       #E24B4A;
+      --red-lt:    #FCEBEB;
+      --green:     #1D9E75;
+      --green-lt:  #E1F5EE;
+      --gray-50:   #F7F6F3;
+      --gray-100:  #EDEDEA;
+      --gray-200:  #D3D1C7;
+      --gray-400:  #888780;
+      --gray-700:  #444441;
+      --gray-900:  #1A1A18;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-xl: 18px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #111;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-lion {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: #fff;
+    }
+    .logo-text span { color: var(--brand); }
+
+    .app-title-wrap {
+      margin-left: auto;
+      text-align: right;
+    }
+    .app-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+
+    /* ── HERO STRIP ── */
+    .hero-strip {
+      background: linear-gradient(135deg, #1A1A18 0%, #2C2A22 100%);
+      padding: 2rem 1.5rem 1.8rem;
+      text-align: center;
+    }
+
+    .hero-strip h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      color: #fff;
+      margin-bottom: 0.4rem;
+      line-height: 1.15;
+    }
+    .hero-strip h1 span { color: var(--brand); }
+
+    .hero-strip p {
+      font-size: 14px;
+      color: #888780;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: #fff;
+      border-radius: var(--r-xl);
+      border: 0.5px solid var(--gray-200);
+      padding: 1.4rem;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 1.1rem;
+    }
+
+    /* ── INPUTS ── */
+    .field {
+      margin-bottom: 14px;
+    }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .field label .hint {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--gray-400);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 12px;
+      font-size: 14px;
+      color: var(--gray-400);
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 12px;
+      font-size: 13px;
+      color: var(--gray-400);
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 11px 40px 11px 28px;
+      border: 0.5px solid var(--gray-200);
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      color: var(--gray-900);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus {
+      border-color: var(--brand);
+      background: #fff;
+    }
+
+    /* slider */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--gray-200);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--brand);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .slider-val {
+      min-width: 42px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--brand-dk);
+    }
+
+    /* ── RESULTADO ── */
+    .result-card {
+      background: #111;
+      border-radius: var(--r-xl);
+      padding: 1.6rem;
+      color: #fff;
+    }
+
+    .result-header {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 1.2rem;
+    }
+
+    .result-main {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+    }
+
+    .result-price-block {}
+    .result-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 3px;
+    }
+    .result-price {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 8vw, 2.8rem);
+      color: var(--brand);
+      line-height: 1;
+    }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .badge-ganancia {
+      background: rgba(29,158,117,0.15);
+      color: #4DD4A0;
+    }
+    .badge-perdida {
+      background: rgba(226,75,74,0.18);
+      color: #F08080;
+    }
+
+    .result-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+      padding-top: 1rem;
+    }
+
+    .breakdown-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+    }
+    .breakdown-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 3px;
+    }
+    .breakdown-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .breakdown-value.pos { color: #4DD4A0; }
+    .breakdown-value.neg { color: #F08080; }
+    .breakdown-value.warn { color: var(--brand); }
+
+    /* ── RECOMENDACIÓN ── */
+    .rec-card {
+      border-radius: var(--r-xl);
+      padding: 1.2rem 1.4rem;
+      border: 0.5px solid;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .rec-card.green { background: var(--green-lt); border-color: #9FE1CB; }
+    .rec-card.red   { background: var(--red-lt);   border-color: #F0BABA; }
+    .rec-card.warn  { background: var(--brand-lt);  border-color: var(--brand-mid); }
+
+    .rec-icon { font-size: 20px; line-height: 1; margin-top: 1px; }
+    .rec-text { flex: 1; }
+    .rec-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .rec-title.green { color: #085041; }
+    .rec-title.red   { color: #791F1F; }
+    .rec-title.warn  { color: var(--brand-dk); }
+    .rec-body {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .rec-body.green { color: #0F6E56; }
+    .rec-body.red   { color: #A32D2D; }
+    .rec-body.warn  { color: var(--brand-dk); }
+
+    /* ── PRECIO SUGERIDO ── */
+    .sugerido-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .sugerido-btn {
+      flex: 1;
+      min-width: 120px;
+      background: var(--gray-50);
+      border: 0.5px solid var(--gray-200);
+      border-radius: var(--r-lg);
+      padding: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .sugerido-btn:hover {
+      border-color: var(--brand);
+      background: var(--brand-lt);
+    }
+    .sugerido-btn.active {
+      border-color: var(--brand);
+      background: var(--brand-lt);
+    }
+    .sugerido-margen {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-bottom: 3px;
+    }
+    .sugerido-precio {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--brand-dk);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 12px;
+      color: var(--gray-400);
+      border-top: 0.5px solid var(--gray-100);
+      background: #fff;
+    }
+    footer span { color: var(--brand); font-weight: 500; }
+
+    @media (max-width: 480px) {
+      .result-breakdown { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo-lion">🦁</span>
+  <span class="logo-text">Solar<span>Lion</span> Apps</span>
+  <div class="app-title-wrap">
+    <div class="app-title">Calculadora de Ganancias</div>
+  </div>
+</header>
+
+<div class="hero-strip">
+  <h1>¿Estás ganando<br>o <span>perdiendo dinero?</span></h1>
+  <p>Ingresa tus costos y calcula el precio ideal de venta al instante.</p>
+</div>
+
+<div class="main">
+
+  <!-- COSTOS -->
+  <div class="card">
+    <div class="card-title">Costos del producto</div>
+
+    <div class="field">
+      <label>
+        Costo del producto
+        <span class="hint">¿Cuánto te costó?</span>
+      </label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="costo" value="100" min="0" oninput="calcular()" />
+        <span class="input-suffix">MXN</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>
+        Costo de envío
+        <span class="hint">Lo que pagas al paquetero</span>
+      </label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="envio" value="60" min="0" oninput="calcular()" />
+        <span class="input-suffix">MXN</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>
+        Otros gastos
+        <span class="hint">Bolsas, etiquetas, etc.</span>
+      </label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="otros" value="10" min="0" oninput="calcular()" />
+        <span class="input-suffix">MXN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMISIONES -->
+  <div class="card">
+    <div class="card-title">Comisiones de plataforma</div>
+
+    <div class="field">
+      <label>
+        Comisión de plataforma
+        <span class="hint">MercadoLibre, Facebook, etc.</span>
+      </label>
+      <div class="slider-row">
+        <input type="range" id="comision" min="0" max="30" value="13" step="1" oninput="updateSlider('comision','comisionVal'); calcular()" />
+        <span class="slider-val" id="comisionVal">13%</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>
+        Ganancia deseada
+        <span class="hint">¿Cuánto quieres ganar?</span>
+      </label>
+      <div class="slider-row">
+        <input type="range" id="margen" min="5" max="80" value="30" step="1" oninput="updateSlider('margen','margenVal'); calcular()" />
+        <span class="slider-val" id="margenVal">30%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRECIO DE VENTA -->
+  <div class="card">
+    <div class="card-title">¿A qué precio lo estás vendiendo?</div>
+    <div class="field">
+      <label>
+        Precio de venta actual
+        <span class="hint">O deja en 0 para ver el sugerido</span>
+      </label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="precio" value="0" min="0" oninput="calcular()" />
+        <span class="input-suffix">MXN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result-card">
+    <div class="result-header">📊 Resultado</div>
+    <div class="result-main">
+      <div class="result-price-block">
+        <div class="result-label">Precio sugerido de venta</div>
+        <div class="result-price" id="precioSugerido">$0</div>
+      </div>
+      <div class="result-badge badge-ganancia" id="resultBadge">+$0 ganancia</div>
+    </div>
+    <div class="result-breakdown">
+      <div class="breakdown-item">
+        <div class="breakdown-label">Costo total</div>
+        <div class="breakdown-value neg" id="costoTotal">$0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Comisión plataforma</div>
+        <div class="breakdown-value neg" id="comisionMonto">$0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Ganancia neta</div>
+        <div class="breakdown-value pos" id="gananciaNeta">$0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-label">Margen real</div>
+        <div class="breakdown-value warn" id="margenReal">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMENDACIÓN -->
+  <div class="rec-card warn" id="recCard">
+    <div class="rec-icon" id="recIcon">💡</div>
+    <div class="rec-text">
+      <div class="rec-title warn" id="recTitle">Ingresa tus datos</div>
+      <div class="rec-body warn" id="recBody">Llena los campos de arriba para ver tu análisis de ganancias.</div>
+    </div>
+  </div>
+
+  <!-- PRECIOS SUGERIDOS POR MARGEN -->
+  <div class="card">
+    <div class="card-title">Precios por margen de ganancia</div>
+    <div class="sugerido-row" id="sugeridoRow">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Hecho con 🦁 por <span>SolarLion Apps</span> · solarlionapps.com
+</footer>
+
+<script>
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('es-MX');
+  }
+
+  function pct(n) {
+    return Math.round(n) + '%';
+  }
+
+  function updateSlider(id, outId) {
+    const val = document.getElementById(id).value;
+    document.getElementById(outId).textContent = val + '%';
+  }
+
+  function calcular() {
+    const costo    = parseFloat(document.getElementById('costo').value)  || 0;
+    const envio    = parseFloat(document.getElementById('envio').value)  || 0;
+    const otros    = parseFloat(document.getElementById('otros').value)  || 0;
+    const comision = parseFloat(document.getElementById('comision').value) || 0;
+    const margen   = parseFloat(document.getElementById('margen').value) || 30;
+    const precioIngresado = parseFloat(document.getElementById('precio').value) || 0;
+
+    const costoTotal = costo + envio + otros;
+
+    // Precio sugerido: cubrir costos + comisión + margen deseado
+    // precio = costoTotal / (1 - comision/100 - margen/100)
+    const divisor = 1 - (comision / 100) - (margen / 100);
+    let precioSugerido = divisor > 0 ? costoTotal / divisor : costoTotal * 2;
+
+    // Si el usuario ingresó un precio, analizamos ese precio
+    const precioAnalizado = precioIngresado > 0 ? precioIngresado : precioSugerido;
+    const comisionMonto   = precioAnalizado * (comision / 100);
+    const gananciaNeta    = precioAnalizado - costoTotal - comisionMonto;
+    const margenReal      = precioAnalizado > 0 ? (gananciaNeta / precioAnalizado) * 100 : 0;
+
+    // Update UI
+    document.getElementById('precioSugerido').textContent = fmt(precioSugerido);
+    document.getElementById('costoTotal').textContent     = fmt(costoTotal);
+    document.getElementById('comisionMonto').textContent  = fmt(comisionMonto);
+    document.getElementById('gananciaNeta').textContent   = fmt(gananciaNeta);
+    document.getElementById('margenReal').textContent     = pct(margenReal);
+
+    // Badge
+    const badge = document.getElementById('resultBadge');
+    if (gananciaNeta >= 0) {
+      badge.className = 'result-badge badge-ganancia';
+      badge.textContent = '+' + fmt(gananciaNeta) + ' ganancia';
+    } else {
+      badge.className = 'result-badge badge-perdida';
+      badge.textContent = fmt(gananciaNeta) + ' pérdida';
+    }
+
+    // Recomendación
+    const recCard  = document.getElementById('recCard');
+    const recIcon  = document.getElementById('recIcon');
+    const recTitle = document.getElementById('recTitle');
+    const recBody  = document.getElementById('recBody');
+
+    if (precioIngresado > 0 && gananciaNeta < 0) {
+      recCard.className  = 'rec-card red';
+      recIcon.textContent  = '🚨';
+      recTitle.className = 'rec-title red';
+      recTitle.textContent = '¡Estás perdiendo dinero!';
+      recBody.className  = 'rec-body red';
+      recBody.textContent  = `Con ese precio pierdes ${fmt(Math.abs(gananciaNeta))} por venta. Sube tu precio a mínimo ${fmt(precioSugerido)} para no perder.`;
+    } else if (precioIngresado > 0 && margenReal < 10) {
+      recCard.className  = 'rec-card warn';
+      recIcon.textContent  = '⚠️';
+      recTitle.className = 'rec-title warn';
+      recTitle.textContent = 'Margen muy bajo';
+      recBody.className  = 'rec-body warn';
+      recBody.textContent  = `Ganas apenas ${pct(margenReal)} de margen. Considera subir a ${fmt(precioSugerido)} para alcanzar tu meta de ${pct(margen)}.`;
+    } else if (precioIngresado > 0 && margenReal >= margen) {
+      recCard.className  = 'rec-card green';
+      recIcon.textContent  = '✅';
+      recTitle.className = 'rec-title green';
+      recTitle.textContent = '¡Precio excelente!';
+      recBody.className  = 'rec-body green';
+      recBody.textContent  = `Vas muy bien. Ganas ${fmt(gananciaNeta)} por venta con un margen de ${pct(margenReal)}. ¡Sigue así!`;
+    } else if (precioIngresado === 0) {
+      recCard.className  = 'rec-card warn';
+      recIcon.textContent  = '💡';
+      recTitle.className = 'rec-title warn';
+      recTitle.textContent = 'Precio sugerido calculado';
+      recBody.className  = 'rec-body warn';
+      recBody.textContent  = `Para ganar un ${pct(margen)} de margen debes vender a ${fmt(precioSugerido)}. Ingresa tu precio actual para comparar.`;
+    } else {
+      recCard.className  = 'rec-card green';
+      recIcon.textContent  = '👍';
+      recTitle.className = 'rec-title green';
+      recTitle.textContent = 'Buen precio';
+      recBody.className  = 'rec-body green';
+      recBody.textContent  = `Tu precio actual te da ${fmt(gananciaNeta)} de ganancia por venta (${pct(margenReal)} de margen).`;
+    }
+
+    // Tabla de precios por margen
+    const row = document.getElementById('sugeridoRow');
+    row.innerHTML = '';
+    [20, 30, 40, 50].forEach(m => {
+      const d = 1 - (comision / 100) - (m / 100);
+      const p = d > 0 ? costoTotal / d : costoTotal * 2;
+      const btn = document.createElement('div');
+      btn.className = 'sugerido-btn' + (m === Math.round(margen) ? ' active' : '');
+      btn.innerHTML = `<div class="sugerido-margen">${m}% ganancia</div><div class="sugerido-precio">${fmt(p)}</div>`;
+      btn.onclick = () => {
+        document.getElementById('margen').value = m;
+        document.getElementById('margenVal').textContent = m + '%';
+        calcular();
+      };
+      row.appendChild(btn);
+    });
+  }
+
+  // Init
+  calcular();
+</script>
+
+  <!-- Registrar Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('SW registrado'))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+</body>
+</html>
